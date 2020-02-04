@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <body>
+        <h1>
+            안녕하세요
+            id : <input type="text" id='userId'><br>
+            password : <input type="text" id='userPassword'>
+            <button type="button" id='signupBtn'><회원가입></button>
+        </h1>
+    </body>
+
+<!--
+jQuery는 엘리먼트를 선택하는 강력한 방법과
+선택된 엘리먼트들을 효율적으로 제어할 수 있는 다양한 수단을 제공하는
+자바스크립트 라이브러리
+
+jQuery가 없으면 #등을 사용하지 못하고 DOM을 사용해서 가지고 와야 한다. 
+-->
+
+    <script
+    src="https://code.jquery.com/jquery-2.2.4.js"
+    integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+    crossorigin="anonymous">
+    </script>
+
+    <script>
+        console.log('page is loaded');
+        $("#signupBtn").click(function(){
+            console.log('btn is clicked');
+            console.log($("#userId").val());
+            console.log($("#userPassword").val());
+            
+            var userId = $("#userId").val();
+            var userPassword = $("#userPassword").val();
+            
+            $.ajax({
+                url:'http://localhost:3000/join',
+                type : 'POST',
+                data : {
+                    userId : userId,
+                    userPassword : userPassword
+                },
+                success:function(data){
+                    console.log(data);
+                  }
+            })
+        });
+    </script>
+</html>
