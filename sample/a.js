@@ -17,4 +17,3 @@ console.log(operator(3,4, '-'));
 console.log(operator(3,4, '+'));
 console.log(operator(3,4, '/'));
 console.log(operator(3,4, '*'));
-

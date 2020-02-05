@@ -1,9 +1,10 @@
 <!DOCTYPE html>
     <body>
         <h1>
-            안녕하세요
+            안녕하세요<br>
             id : <input type="text" id='userId'><br>
-            password : <input type="text" id='userPassword'>
+            password : <input type="text" id='userPassword'><br>
+            name : <input type="text" id='userName'><br>
             <button type="button" id='signupBtn'><회원가입></button>
         </h1>
     </body>
@@ -28,20 +29,23 @@ jQuery가 없으면 #등을 사용하지 못하고 DOM을 사용해서 가지고
             console.log('btn is clicked');
             console.log($("#userId").val());
             console.log($("#userPassword").val());
-            
+            console.log($("#userName").val());
+
             var userId = $("#userId").val();
             var userPassword = $("#userPassword").val();
-            
+            var userName = $("#userName").val();
+
             $.ajax({
                 url:'http://localhost:3000/join',
                 type : 'POST',
                 data : {
                     userId : userId,
-                    userPassword : userPassword
+                    userPassword : userPassword,
+                    userName : userName
                 },
                 success:function(data){
                     console.log(data);
-                  }
+                }
             })
         });
     </script>

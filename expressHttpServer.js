@@ -1,36 +1,69 @@
-// Express.js, 또는 간단히 익스프레스는 Node.js를 위한 웹 프레임워크의 하나
-// nodejs로 웹서버에 필요한 기능을 하나하나 다 짜면 너무 귀찮다. 
-// 웹 프레임워크를 사용하여 편하게 프레임워크에 따라 Web을 만들 수 있다.
-// 비슷한 예로 python의 flask나 Java의 Spring이 있다. 
-// localhost 3000에 열린다. 
-// ejs
-
 const express = require('express')
 const app = express()
+var request = require('request')
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : '0717',
+  database : 'fintech',
+  port : "3306"
+});
+
+connection.connect();
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
+app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
-app.get('/', function (req, res) {
-    res.render('firstPage')
-    console.log("first page connected");
+app.get('/signup', function(req, res){
+  res.render('signup');
 })
 
-app.get('/home', function (req, res) {
-    res.render('home')
-    console.log("connected to home")
+app.get('/authResult', function(req, res){
+  var authCode = req.query.code;
+  console.log(authCode);
+  var option = {
+    method : "POST",
+    url : "https://testapi.openbanking.or.kr/oauth/2.0/token",
+    headers : {
+      'Content-Type' : "application/x-www-form-urlencoded; charset=UTF-8"
+    },
+    form : {
+        code : authCode,
+        client_id : 'q7kH44ThJwjpvNRg0BbJvE1yxvx5X53DKz1rNgPF',
+        client_secret : 'yVT6irMr2h4ZTHzZY7sDpbvhm1nlOzr4nP7DYRVy',
+        redirect_uri : 'http://localhost:3000/authResult',
+        grant_type : 'authorization_code'
+    }
+  }
+  request(option, function (error, response, body) {
+    var parseData = JSON.parse(body);
+    res.render('resultChild',{data : parseData})
+  });
 })
 
-app.get('/member', function (req, res) {
-    res.render('member')
-    console.log("connected to member")
-})
-
-app.post('/join', function(req, res){
-    console.log(req.body)
+app.post('/signup', function(req, res){
+  var userName = req.body.userName
+  var userEmail = req.body.userEmail
+  var userPassword = req.body.userPassword
+  var userAccessToken = req.body.userAccessToken
+  var userRefreshToken = req.body.userRefreshToken
+  var userSeqNo = req.body.userSeqNo
+  var sql = "INSERT INTO user (email, password, name, accesstoken, refreshtoken, userseqno) VALUES (?,?,?,?,?,?)"
+  connection.query(sql,[userEmail, userPassword, userName, userAccessToken, userRefreshToken, userSeqNo], function (err, results, fields) {
+    if(err){
+      console.error(err);
+      throw err;
+    }
+    else {
+      res.json('success');
+    }
+  });
+  
 })
 
 app.listen(3000)

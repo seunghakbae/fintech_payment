@@ -1,19 +1,52 @@
-<form action="action_page.php" method="post">
-    <div class="container">
-      <label for="uname"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="uname" required>
-  
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
-  
-      <button type="submit">Login</button>
-      <label>
-        <input type="checkbox" checked="checked" name="remember"> Remember me
-      </label>
-    </div>
-  
-    <div class="container" style="background-color:#f1f1f1">
-      <button type="button" class="cancelbtn">Cancel</button>
-      <span class="psw">Forgot <a href="#">password?</a></span>
-    </div>
-  </form>
+<!DOCTYPE html>
+    <body>
+        <h1>
+            This is home <br>
+            id : <input type="text" id='userId'><br>
+            password : <input type="text" id='userPassword'><br>
+            name : <input type="text" id='userName'><br>
+            <button type="button" id='signupBtn'><회원가입></button>
+        </h1>
+    </body>
+
+<!--
+jQuery는 엘리먼트를 선택하는 강력한 방법과
+선택된 엘리먼트들을 효율적으로 제어할 수 있는 다양한 수단을 제공하는
+자바스크립트 라이브러리
+
+jQuery가 없으면 #등을 사용하지 못하고 DOM을 사용해서 가지고 와야 한다. 
+-->
+
+    <script
+    src="https://code.jquery.com/jquery-2.2.4.js"
+    integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+    crossorigin="anonymous">
+    </script>
+
+    <script>
+        console.log('page is loaded');
+        $("#signupBtn").click(function(){
+            console.log('btn is clicked');
+            console.log($("#userId").val());
+            console.log($("#userPassword").val());
+            console.log($("#userName").val());
+
+            var userId = $("#userId").val();
+            var userPassword = $("#userPassword").val();
+            var userName = $("#userName").val();
+
+            $.ajax({
+                url:'http://localhost:3000/join',
+                type : 'POST',
+                data : {
+                    userId : userId,
+                    userPassword : userPassword,
+                    userName : userName
+                },
+                success:function(data){
+                    console.log(data);
+                }
+            })
+        });
+    </script>
+</html>
