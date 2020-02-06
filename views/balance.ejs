@@ -109,9 +109,12 @@
 			<!-- Page content start -->
 			<main>
 				<div class="container">
-					<div id="balanceText"></div>
+                    <div id="balanceText"></div>
+                        <h1 id="balance_amt"></h1>
 					<div id="transactionList"></div>
-				</div>
+					<section class="bal-section container" id="cardList" size='10'>
+                    </section>        
+                </div>
 ​
 				<div class="form-divider"></div>
 ​
@@ -159,12 +162,51 @@
     }
     return b;
 	}
-	var qs = getQueryStringObject();
+    var qs = getQueryStringObject();
     var jwtToken = sessionStorage.getItem('jwtToken');
     console.log(qs)
 	$.ajax({
+        url:'http://localhost:3000/balance',
+                type : 'POST',
+                headers : {
+                    'x-access-token' : jwtToken
+                },
+                data : {
+                    fin_use_num : qs.fin_use_num
+                },
+                success:function(data){
+                    console.log("해당 계좌의 잔액은 : ", data.balance_amt)
+                    $('#balance_amt').text(data.balance_amt);
+                }
 	})
 	$.ajax({
+        url:'http://localhost:3000/transaction',
+                type : 'POST',
+                headers : {
+                    'x-access-token' : jwtToken
+                },
+                data : {
+                    fin_use_num : qs.fin_use_num
+                },
+                success:function(data){
+                    console.log(data);
+                    for(var i=0; i < data.res_list.length; i++){
+                        $("#cardList").append(
+                            '<div class="balance-card mb-15">'+
+						        '<div class="d-flex align-items-center">'+
+	                        '<div class="d-flex flex-grow">'+
+                                    '<div class="mr-auto">' +
+                                        '<p class="g-text mb-10">'+data.res_list[i].print_content+'</p>'+
+                                        '<p class="g-text mb-10">'+data.res_list[i].after_balance_amt+'</p>'+
+                                    '</div>'+
+                                    '</div>'+
+                                    '</div>'+
+                                    '</div>'
+                        )
+                    }
+                    //console.log("해당 계좌의 잔액은 : ", data.balance_amt)
+                    //$('#balance_amt').text(data.balance_amt);
+                }
 	})
 	</script>
 	
