@@ -44,6 +44,19 @@ app.get('/qrcode', function(req, res){
   res.render('qrcode');
 })
 
+app.get('/qrreader', function(req, res){
+  res.render('qrReader');
+})
+
+app.get('/withdraw', function(req, res){
+  res.render('withdraw');
+})
+
+app.get('/login', function(req, res){
+  res.render('login');
+})
+
+
 app.get('/authResult', function(req, res){
   var authCode = req.query.code;
   console.log(authCode);
@@ -249,6 +262,43 @@ app.post('/transaction',auth, function(req, res){
   });
   });
 })
+
+app.post('/withdraw',auth, function(req, res){
+  var user = req.decoded;
+  console.log(user.userName + "접속하여 이체내역을 보여줍니다.");
+  var finusenum = req.body.fin_use_num;
+  var trandtime = '20200206101921';
+  var countnum = Math.floor(Math.random() * 1000000000) + 1;
+  var transId = "T991608440" +'U'+ countnum;
+  
+  var sql = "SELECT * FROM user WHERE id = ?"
+  connection.query(sql,[user.userId], function (err, results, fields) {
+    var option = {
+      method : "GET",
+      url : "https://testapi.openbanking.or.kr/v2.0/account/transaction_list/fin_num",
+      headers : {
+        'Authorization' : "Bearer " + results[0].accesstoken
+      },
+      qs : {
+        bank_tran_id : transId,
+        fintech_use_num : finusenum,
+        inquiry_type : 'A',
+        inquiry_base : 'D',
+        from_date : '20160404',
+        to_date : '20200206',
+        sort_order : 'D',
+        tran_dtime : "20200205172120"
+      }
+    };
+
+  request(option, function (error, response, body) {
+    var parseData = JSON.parse(body);
+    res.json(parseData);
+    console.log(parseData);
+  });
+  });
+})
+
 
 
 app.listen(3000)  
